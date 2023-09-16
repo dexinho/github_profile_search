@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Document</title>
+</head>
+<body>
+    <div id="container">
+        <div id="search-area-container">
+            <label for="search-bar"><input type="text" id="search-bar"></label>
+            <select id="page-count">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+            </select>
+            <button id="search-button">SEARCH</button>
+        </div>
+        <div id="search-results-div">
+            <div class="image-placeholder"></div>
+        </div>
+        <div id="previous-or-next-page">
+            <span id="full-backward" class="backward-or-forward"><i class="fa-solid fa-backward"></i></span>
+            <span id="one-backward" class="backward-or-forward"><i class="fa-solid fa-less-than"></i></span>
+            <span id="page-number">1</span>
+            <span id="one-forward" class="backward-or-forward"><i class="fa-solid fa-greater-than"></i></span>
+            <span id="full-forward" class="backward-or-forward"><i class="fa-solid fa-forward"></i></span>
+        </div>
+    </div>
+</body>
+</html>
