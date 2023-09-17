@@ -13,11 +13,11 @@
 <body>
     <div id="container">
         <div id="search-area-container">
-            <label for="search-bar"><input type="text" id="search-bar"></label>
+            <label for="search-bar"><input type="text" id="search-bar" maxlength="30" placeholder="nickname"></label>
             <select id="page-count">
                 <option value="5">5</option>
                 <option value="10">10</option>
-                <option value="15">15</option>
+                <option value="20">15</option>
                 <option value="20">20</option>
             </select>
             <button id="search-button">SEARCH</button>
@@ -25,11 +25,11 @@
         <div id="search-results-container">
         </div>
         <div id="previous-or-next-page">
-            <span id="full-backward" class="backward-or-forward"><i class="fa-solid fa-backward"></i></span>
-            <span id="one-backward" class="backward-or-forward"><i class="fa-solid fa-less-than"></i></span>
-            <span id="page-number">1</span>
-            <span id="one-forward" class="backward-or-forward"><i class="fa-solid fa-greater-than"></i></span>
-            <span id="full-forward" class="backward-or-forward"><i class="fa-solid fa-forward"></i></span>
+            <span><i id="full-backward" class="fa-solid fa-backward forward-or-backward"></i></span>
+            <span><i id="one-backward" class="fa-solid fa-less-than forward-or-backward"></i></span>
+            <span id="page-number"></span><span id="forward-slash">/</span><span id="max-pages"></span>
+            <span><i id="one-forward" class="fa-solid fa-greater-than forward-or-backward"></i></span>
+            <span><i id="full-forward" class="fa-solid fa-forward forward-or-backward"></i></span>
         </div>
     </div>
 </body>
