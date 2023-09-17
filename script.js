@@ -3,9 +3,15 @@ const searchButton = document.querySelector('#search-button')
 const pageCount = document.querySelector('#page-count')
 const backwardOrForward = document.querySelectorAll('.backward-or-forward')
 const searchResultsContainer = document.querySelector('#search-results-container')
+const forwardOrBackward = document.querySelectorAll('.forward-or-backward')
+const pageNumber = document.querySelector('#page-number')
+const maxPages = document.querySelector('#max-pages')
+const GIT_USER_DATA = []
+let ITEMS_PER_PAGE = 0
+let FETCH_SWITCH = true
 
-function appendUsers({login, id, html_url, avatar_url}) {
-
+function showUsersOnTheScreen({ login, id, html_url, avatar_url }) {
+    
     const searchResultDiv = document.createElement('div')
     const imagePlaceholderDiv = document.createElement('div')
     const profilePicture = document.createElement('img')
@@ -37,20 +43,73 @@ function appendUsers({login, id, html_url, avatar_url}) {
     userURL.target = '_blank'
 }
 
-function cleanUsers(){
+function cleanUsers() {
     while (searchResultsContainer.childElementCount > 0)
         searchResultsContainer.removeChild(searchResultsContainer.firstElementChild)
 }
 
-async function fetchData() {
-    const api = await fetch(`https://api.github.com/search/users?q=${searchBar.value}&per_page=${pageCount.value}`)
-    const data = await api.json()
-
+function appendUsers() {
     cleanUsers()
 
-    data.items.forEach(profile => {
-        appendUsers(profile)
-    })
+    for (let i = ITEMS_PER_PAGE; i < Math.min(ITEMS_PER_PAGE + Number(pageCount.value), GIT_USER_DATA.length); i++) {
+        showUsersOnTheScreen(GIT_USER_DATA[i])
+    }
+}
+
+function resetPageNumbers(){
+    ITEMS_PER_PAGE = 0
+    pageNumber.innerText = 1
+    maxPages.innerText = Math.ceil((GIT_USER_DATA.length) / Number(pageCount.value))
+}
+
+async function fetchData() {
+
+    if (FETCH_SWITCH) {
+        FETCH_SWITCH = !FETCH_SWITCH
+        try {
+            const api = await fetch(`https://api.github.com/search/users?q=${searchBar.value}&per_page=100`)
+            const data = await api.json()
+
+            GIT_USER_DATA.length = 0
+            GIT_USER_DATA.push(...data.items)
+
+            resetPageNumbers()
+            appendUsers()
+
+        } catch (err) {
+            console.log(err)
+        } finally {
+            FETCH_SWITCH = !FETCH_SWITCH
+        }
+    }
 }
 
 searchButton.addEventListener('click', fetchData)
+searchBar.addEventListener('keydown', (e) => e.key === 'Enter' ? fetchData() : null)
+pageCount.addEventListener('change', () => GIT_USER_DATA.length > 0 ? fetchData() : null)
+
+forwardOrBackward.forEach(button => {
+    button.addEventListener('click', (e) => {
+        numOfPagesSelected = Number(pageCount.value)
+        if (e.target.id === 'one-backward') {
+            ITEMS_PER_PAGE = ITEMS_PER_PAGE - pageCount.value < 0
+                ? 0
+                : (pageNumber.innerText--, ITEMS_PER_PAGE - numOfPagesSelected)
+        }
+        else if (e.target.id === 'one-forward') {
+            ITEMS_PER_PAGE = ITEMS_PER_PAGE + numOfPagesSelected >= GIT_USER_DATA.length
+                ? ITEMS_PER_PAGE
+                : (pageNumber.innerText++, ITEMS_PER_PAGE + numOfPagesSelected)
+        }
+        else if (e.target.id === 'full-forward') {
+            pageNumber.innerText = Math.ceil((GIT_USER_DATA.length) / numOfPagesSelected)
+            ITEMS_PER_PAGE = Number(pageNumber.innerText - 1) * pageCount.value
+        }
+        else if (e.target.id === 'full-backward') {
+            pageNumber.innerText = 1
+            ITEMS_PER_PAGE = 0
+        }
+
+        appendUsers()
+    })
+})
