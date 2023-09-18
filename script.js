@@ -6,12 +6,14 @@ const searchResultsContainer = document.querySelector('#search-results-container
 const forwardOrBackward = document.querySelectorAll('.forward-or-backward')
 const pageNumber = document.querySelector('#page-number')
 const maxPages = document.querySelector('#max-pages')
+const previousOrNextPage = document.querySelector('#previous-or-next-page')
 const GIT_USER_DATA = []
 let ITEMS_PER_PAGE = 0
 let FETCH_SWITCH = true
+searchButton.disabled = true
 
 function showUsersOnTheScreen({ login, id, html_url, avatar_url }) {
-    
+
     const searchResultDiv = document.createElement('div')
     const imagePlaceholderDiv = document.createElement('div')
     const profilePicture = document.createElement('img')
@@ -56,10 +58,15 @@ function appendUsers() {
     }
 }
 
-function resetPageNumbers(){
+function resetPageNumbers() {
     ITEMS_PER_PAGE = 0
-    pageNumber.innerText = 1
+    pageNumber.innerText = GIT_USER_DATA.length > 0 ? 1 : 0
     maxPages.innerText = Math.ceil((GIT_USER_DATA.length) / Number(pageCount.value))
+}
+
+function showPagingAndEnableSearchButton() {
+    previousOrNextPage.style.display = 'flex'
+    searchButton.disabled = true
 }
 
 async function fetchData() {
@@ -73,6 +80,7 @@ async function fetchData() {
             GIT_USER_DATA.length = 0
             GIT_USER_DATA.push(...data.items)
 
+            showPagingAndEnableSearchButton()
             resetPageNumbers()
             appendUsers()
 
@@ -85,12 +93,17 @@ async function fetchData() {
 }
 
 searchButton.addEventListener('click', fetchData)
+searchBar.addEventListener('change', () => {
+    if (searchBar.value !== '') searchButton.disabled = false
+})
 searchBar.addEventListener('keydown', (e) => e.key === 'Enter' ? fetchData() : null)
 pageCount.addEventListener('change', () => GIT_USER_DATA.length > 0 ? fetchData() : null)
 
 forwardOrBackward.forEach(button => {
     button.addEventListener('click', (e) => {
+
         numOfPagesSelected = Number(pageCount.value)
+
         if (e.target.id === 'one-backward') {
             ITEMS_PER_PAGE = ITEMS_PER_PAGE - pageCount.value < 0
                 ? 0
@@ -105,10 +118,7 @@ forwardOrBackward.forEach(button => {
             pageNumber.innerText = Math.ceil((GIT_USER_DATA.length) / numOfPagesSelected)
             ITEMS_PER_PAGE = Number(pageNumber.innerText - 1) * pageCount.value
         }
-        else if (e.target.id === 'full-backward') {
-            pageNumber.innerText = 1
-            ITEMS_PER_PAGE = 0
-        }
+        else if (e.target.id === 'full-backward') resetPageNumbers()
 
         appendUsers()
     })
